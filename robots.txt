@@ -1,0 +1,15 @@
+# robots.txt — Scientific Calculator Pro
+# https://scientificcalculaterpro.website/
+
+# Allow all search engine crawlers full access
+User-agent: *
+Allow: /
+
+# Disallow admin or private paths (none currently, but reserved)
+# Disallow: /admin/
+
+# Sitemap location
+Sitemap: https://scientificcalculaterpro.website/sitemap.xml
+
+# Crawl-delay (optional, respectful rate limit in seconds)
+Crawl-delay: 5

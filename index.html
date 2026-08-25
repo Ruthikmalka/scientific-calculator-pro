@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scientific Calculator Pro</title>
+  <meta name="description" content="Scientific Calculator Pro — a professional, responsive, modern web application featuring Scientific Calculator, Graphing Calculator, and Matrix Calculator built with HTML, Tailwind CSS, and JavaScript.">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#06b6d4',
+              600: '#0891b2',
+              700: '#0e7490',
+            },
+            accent: {
+              indigo: '#6366f1',
+              violet: '#8b5cf6',
+              cyan: '#06b6d4',
+              emerald: '#10b981'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts & Custom CSS -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-between p-2 md:p-6 transition-colors duration-300">
+
+  <!-- Main Container -->
+  <div class="w-full max-w-5xl mx-auto flex flex-col gap-4">
+    
+    <!-- Top Header Bar with Scientific Calculator Pro -->
+    <header class="w-full glass-panel rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 border border-slate-800 shadow-xl relative z-50">
+      
+      <!-- Brand Logo & Math Tools Nav Selector -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+          <i class="fa-solid fa-shapes text-white text-lg"></i>
+        </div>
+        
+        <!-- Scientific Calculator Pro Dropdown & Direct Switcher Tabs -->
+        <div class="relative flex items-center gap-2">
+          <!-- Dropdown Button -->
+          <div class="relative">
+            <button id="mathToolsMenuBtn" class="flex items-center gap-2.5 px-3 py-1.5 bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 rounded-xl text-sm font-bold text-slate-100 transition-all cursor-pointer">
+              <span class="text-cyan-400 font-mono">Sci</span>
+              <span id="currentToolName" class="text-slate-200">Calculator Pro</span>
+              <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
+            </button>
+
+            <!-- Dropdown Options Menu -->
+            <div id="mathToolsDropdown" class="absolute left-0 top-full mt-2 w-64 glass-panel bg-slate-900/95 border border-slate-700/80 rounded-2xl shadow-2xl p-2 hidden z-[100] transition-all">
+              <div class="text-[11px] font-bold text-slate-400 uppercase px-3 py-1.5 font-mono border-b border-slate-800 mb-1">
+                Scientific Calculator Pro
+              </div>
+              
+              <button data-tool="scientific" class="nav-tool-option w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-200 hover:bg-cyan-500/10 hover:text-cyan-400 transition-colors text-left cursor-pointer">
+                <i class="fa-solid fa-calculator text-cyan-400 text-sm"></i>
+                <div>
+                  <div>Scientific Calculator</div>
+                  <div class="text-[10px] text-slate-400 font-normal">Trig, DEG/RAD, powers, history</div>
+                </div>
+              </button>
+
+              <button data-tool="graphing" class="nav-tool-option w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-200 hover:bg-cyan-500/10 hover:text-cyan-400 transition-colors text-left cursor-pointer">
+                <i class="fa-solid fa-chart-line text-indigo-400 text-sm"></i>
+                <div>
+                  <div>Graphing Calculator</div>
+                  <div class="text-[10px] text-slate-400 font-normal">Plot 2D functions, zoom, inspect</div>
+                </div>
+              </button>
+
+              <button data-tool="matrix" class="nav-tool-option w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-200 hover:bg-cyan-500/10 hover:text-cyan-400 transition-colors text-left cursor-pointer">
+                <i class="fa-solid fa-table-cells text-emerald-400 text-sm"></i>
+                <div>
+                  <div>Matrix Calculator</div>
+                  <div class="text-[10px] text-slate-400 font-normal">Linear algebra, det, inverse, A×B</div>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Navigation Pill Bar (Visible on Tablet/Desktop) -->
+          <div class="hidden sm:flex items-center gap-1 bg-slate-900/80 p-1 rounded-xl border border-slate-800">
+            <button data-tool="scientific" class="quick-tool-tab px-3 py-1 rounded-lg text-xs font-semibold bg-cyan-500 text-slate-950 shadow transition-all cursor-pointer">
+              Scientific
+            </button>
+            <button data-tool="graphing" class="quick-tool-tab px-3 py-1 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all cursor-pointer">
+              Graphing
+            </button>
+            <button data-tool="matrix" class="quick-tool-tab px-3 py-1 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all cursor-pointer">
+              Matrix
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center Controls (Scientific specific controls) -->
+      <div id="sciHeaderControls" class="flex items-center gap-3">
+        <!-- DEG / RAD Switcher -->
+        <div class="bg-slate-900/80 p-1 rounded-xl border border-slate-800 flex items-center shadow-inner">
+          <button id="degBtn" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 bg-cyan-500 text-slate-950 shadow-md">
+            DEG
+          </button>
+          <button id="radBtn" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all duration-200">
+            RAD
+          </button>
+        </div>
+
+        <!-- Clear All Button -->
+        <button id="clearAllBtn" class="px-3.5 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 border border-rose-500/20 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-95">
+          <i class="fa-solid fa-trash-can"></i>
+          <span>Clear All</span>
+        </button>
+      </div>
+
+      <!-- Right Controls: History Toggle & Theme Switcher -->
+      <div class="flex items-center gap-2">
+        <button id="toggleHistoryBtn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 rounded-xl text-xs font-medium flex items-center gap-1.5 transition-all">
+          <i class="fa-solid fa-clock-rotate-left text-cyan-400"></i>
+          <span class="hidden sm:inline">History</span>
+          <span id="historyBadge" class="bg-cyan-500/20 text-cyan-400 px-1.5 py-0.5 rounded-full text-[10px] font-bold">0</span>
+        </button>
+
+        <button id="themeToggleBtn" class="w-9 h-9 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 rounded-xl flex items-center justify-center transition-all">
+          <i class="fa-solid fa-moon text-indigo-400" id="themeIcon"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- VIEW 1: Scientific Calculator Suite -->
+    <div id="toolScientificContainer" class="grid grid-cols-1 lg:grid-cols-12 gap-4 w-full">
+      <!-- Calculator Main Section -->
+      <main class="lg:col-span-8 flex flex-col gap-4">
+        <!-- Display Screen Panel -->
+        <div class="glass-panel rounded-2xl p-5 flex flex-col justify-between min-h-[150px] relative overflow-hidden border border-slate-800 shadow-2xl">
+          <div class="flex justify-between items-center text-xs font-mono text-slate-400 mb-2">
+            <div class="flex items-center gap-2">
+              <span id="modeDisplayBadge" class="bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded border border-cyan-500/20 font-semibold text-[11px]">DEG</span>
+              <span id="ansIndicator" class="text-slate-500 text-[11px] font-mono">Ans = 0</span>
+            </div>
+            <div id="statusMessage" class="text-slate-400 text-[11px] font-mono">Ready</div>
+          </div>
+          <div class="relative w-full overflow-x-auto py-2 text-right">
+            <div id="expressionDisplay" class="font-mono-math text-2xl sm:text-3xl md:text-4xl text-slate-100 tracking-wide min-h-[44px] flex items-center justify-end whitespace-pre transition-all duration-150">
+              <span id="displayText" class="text-slate-100"></span><span class="animate-cursor"></span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between pt-2 border-t border-slate-800/80">
+            <span class="text-xs text-slate-500 font-mono flex items-center gap-1"><i class="fa-solid fa-equals text-[10px]"></i> Live Preview</span>
+            <div id="resultPreview" class="font-mono-math text-lg sm:text-xl font-semibold text-cyan-400 truncate max-w-[80%] text-right">0</div>
+          </div>
+        </div>
+
+        <!-- Function Mode Sub-Tabs -->
+        <div class="flex items-center justify-between gap-2 px-1">
+          <div class="flex items-center gap-1 bg-slate-900/60 p-1 rounded-xl border border-slate-800/80 w-full sm:w-auto">
+            <button id="tabMainSci" class="flex-1 sm:flex-none px-4 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-cyan-400 border border-slate-700 shadow-sm transition-all">Main Sci</button>
+            <button id="tabInvSci" class="flex-1 sm:flex-none px-4 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all">Inverse (⁻¹)</button>
+            <button id="tabExtraSci" class="flex-1 sm:flex-none px-4 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all">Functions</button>
+          </div>
+        </div>
+
+        <!-- Keypads Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+          <!-- Scientific Keypad -->
+          <div class="md:col-span-7 grid grid-cols-4 gap-2 glass-panel p-3.5 rounded-2xl border border-slate-800">
+            <button class="calc-btn btn-func py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-cyan-300 font-mono text-sm font-medium" data-insert="sin(">
+              <span class="main-sci">sin</span><span class="inv-sci hidden">sin⁻¹</span><span class="extra-sci hidden">sinh</span>
+            </button>
+            <button class="calc-btn btn-func py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-cyan-300 font-mono text-sm font-medium" data-insert="cos(">
+              <span class="main-sci">cos</span><span class="inv-sci hidden">cos⁻¹</span><span class="extra-sci hidden">cosh</span>
+            </button>
+            <button class="calc-btn btn-func py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-cyan-300 font-mono text-sm font-medium" data-insert="tan(">
+              <span class="main-sci">tan</span><span class="inv-sci hidden">tan⁻¹</span><span class="extra-sci hidden">tanh</span>
+            </button>
+            <button class="calc-btn btn-func py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-indigo-300 font-mono text-sm font-medium" data-insert="π">π</button>
+
+            <button class="calc-btn btn-func py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-cyan-300 font-mono text-sm font-medium" data-insert="^2">x²</button>
+            <button class="calc-btn btn-func py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-cyan-300 font-mono text-sm font-medium" data-insert="^">x<sup>b</sup></button>
+            <button class="calc-btn btn-func py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-cyan-300 font-mono text-sm font-medium" data-insert="√(">√x</button>
+            <button class="calc-btn btn-func py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-cyan-300 font-mono text-sm font-medium" data-insert="ⁿ√(">ⁿ√x</button>
+
+            <button class="calc-btn btn-func py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-cyan-300 font-mono text-sm font-medium" data-insert="abs(">|a|</button>
+            <button class="calc-btn btn-func py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-cyan-300 font-mono text-sm font-medium" data-insert="log(">log</button>
+            <button class="calc-btn btn-func py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-cyan-300 font-mono text-sm font-medium" data-insert="ln(">ln</button>
+            <button class="calc-btn btn-func py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-indigo-300 font-mono text-sm font-medium" data-insert="e">e</button>
+
+            <button class="calc-btn btn-func py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-cyan-300 font-mono text-sm font-medium" data-insert="!">n!</button>
+            <button class="calc-btn btn-func py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-emerald-400 font-mono text-sm font-medium" data-insert="Ans">Ans</button>
+            <button class="calc-btn btn-func py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-200 font-mono text-sm font-medium" data-insert="(">(</button>
+            <button class="calc-btn btn-func py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-200 font-mono text-sm font-medium" data-insert=")">)</button>
+
+            <button class="calc-btn btn-func py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-cyan-300 font-mono text-sm font-medium" data-insert="10^">10<sup>x</sup></button>
+            <button class="calc-btn btn-func py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-cyan-300 font-mono text-sm font-medium" data-insert="e^">e<sup>x</sup></button>
+            <button class="calc-btn btn-func py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-indigo-300 font-mono text-sm font-medium" data-insert="%">%</button>
+            <button class="calc-btn btn-func py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-indigo-300 font-mono text-sm font-medium" data-insert=",">,</button>
+          </div>
+
+          <!-- Standard Keypad -->
+          <div class="md:col-span-5 grid grid-cols-4 gap-2 glass-panel p-3.5 rounded-2xl border border-slate-800">
+            <button id="clearBtn" class="calc-btn py-3.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-semibold text-sm border border-amber-500/30">C</button>
+            <button id="backspaceBtn" class="calc-btn py-3.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 font-semibold text-sm border border-rose-500/30">⌫</button>
+            <button class="calc-btn btn-op py-3.5 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/40 text-indigo-300 font-mono text-lg font-bold border border-indigo-500/30" data-insert="÷">÷</button>
+            <button class="calc-btn btn-op py-3.5 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/40 text-indigo-300 font-mono text-lg font-bold border border-indigo-500/30" data-insert="×">×</button>
+
+            <button class="calc-btn btn-num py-3.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-100 font-mono text-xl font-semibold" data-insert="7">7</button>
+            <button class="calc-btn btn-num py-3.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-100 font-mono text-xl font-semibold" data-insert="8">8</button>
+            <button class="calc-btn btn-num py-3.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-100 font-mono text-xl font-semibold" data-insert="9">9</button>
+            <button class="calc-btn btn-op py-3.5 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/40 text-indigo-300 font-mono text-lg font-bold border border-indigo-500/30" data-insert="-">-</button>
+
+            <button class="calc-btn btn-num py-3.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-100 font-mono text-xl font-semibold" data-insert="4">4</button>
+            <button class="calc-btn btn-num py-3.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-100 font-mono text-xl font-semibold" data-insert="5">5</button>
+            <button class="calc-btn btn-num py-3.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-100 font-mono text-xl font-semibold" data-insert="6">6</button>
+            <button class="calc-btn btn-op py-3.5 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/40 text-indigo-300 font-mono text-lg font-bold border border-indigo-500/30" data-insert="+">+</button>
+
+            <button class="calc-btn btn-num py-3.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-100 font-mono text-xl font-semibold" data-insert="1">1</button>
+            <button class="calc-btn btn-num py-3.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-100 font-mono text-xl font-semibold" data-insert="2">2</button>
+            <button class="calc-btn btn-num py-3.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-100 font-mono text-xl font-semibold" data-insert="3">3</button>
+            <button id="equalsBtn" class="calc-btn row-span-2 py-3.5 rounded-xl bg-gradient-to-br from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-slate-950 font-bold text-2xl shadow-lg shadow-cyan-500/30 flex items-center justify-center glow-btn">=</button>
+
+            <button class="calc-btn btn-num py-3.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-100 font-mono text-xl font-semibold" data-insert="0">0</button>
+            <button class="calc-btn btn-num py-3.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-100 font-mono text-xl font-semibold" data-insert=".">.</button>
+            <button class="calc-btn btn-num py-3.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-100 font-mono text-sm font-semibold" data-insert="(-)">(-)</button>
+          </div>
+        </div>
+      </main>
+
+      <!-- History Panel -->
+      <aside id="historyPanel" class="lg:col-span-4 glass-panel rounded-2xl p-4 flex flex-col justify-between min-h-[300px] border border-slate-800 shadow-2xl transition-all duration-300">
+        <div>
+          <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-clock-rotate-left text-cyan-400 text-sm"></i>
+              <h2 class="font-bold text-sm text-slate-200 tracking-wide">Calculation History</h2>
+            </div>
+            <button id="clearHistoryOnlyBtn" class="text-xs text-rose-400 hover:text-rose-300 transition-colors flex items-center gap-1 font-medium cursor-pointer">
+              <i class="fa-solid fa-trash text-[10px]"></i> Clear
+            </button>
+          </div>
+
+          <div id="historyList" class="flex flex-col gap-2.5 max-h-[480px] overflow-y-auto pr-1">
+            <div id="emptyHistoryNotice" class="text-center py-12 text-slate-500 text-xs font-mono">
+              <i class="fa-solid fa-calculator text-2xl mb-2 opacity-40 block"></i>
+              No calculation history yet.<br>Perform calculations to save here!
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-800/80 text-[11px] text-slate-500 flex items-center justify-between">
+          <span>Click any item to reuse</span>
+          <span class="text-cyan-500 font-mono">localStorage Saved</span>
+        </div>
+      </aside>
+    </div>
+
+    <!-- VIEW 2: Graphing Calculator Suite -->
+    <div id="toolGraphingContainer" class="hidden grid-cols-1 lg:grid-cols-12 gap-4 w-full">
+      <!-- Equations Sidebar -->
+      <div class="lg:col-span-4 glass-panel rounded-2xl p-4 flex flex-col justify-between border border-slate-800 shadow-2xl">
+        <div>
+          <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
+            <h2 class="font-bold text-sm text-slate-200 tracking-wide flex items-center gap-2">
+              <i class="fa-solid fa-chart-line text-indigo-400"></i> Function Equations
+            </h2>
+            <button id="addEquationBtn" class="px-2.5 py-1 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all cursor-pointer">
+              <i class="fa-solid fa-plus text-[10px]"></i> Add
+            </button>
+          </div>
+
+          <!-- Equations List -->
+          <div id="equationsList" class="flex flex-col gap-3 max-h-[450px] overflow-y-auto">
+            <!-- Dynamic function inputs rendered here -->
+          </div>
+        </div>
+
+        <!-- Graphing Controls -->
+        <div class="pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
+          <button id="resetGraphViewBtn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer">
+            <i class="fa-solid fa-location-crosshairs text-cyan-400"></i> Reset Origin
+          </button>
+          <div class="flex items-center gap-1.5">
+            <button id="zoomInBtn" class="w-8 h-8 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-sm font-bold flex items-center justify-center transition-all cursor-pointer">+</button>
+            <button id="zoomOutBtn" class="w-8 h-8 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-sm font-bold flex items-center justify-center transition-all cursor-pointer">-</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Canvas Plotter -->
+      <div class="lg:col-span-8 glass-panel rounded-2xl p-2 relative overflow-hidden border border-slate-800 shadow-2xl flex items-center justify-center min-h-[480px]">
+        <canvas id="graphCanvas" class="w-full h-full rounded-xl cursor-crosshair"></canvas>
+      </div>
+    </div>
+
+    <!-- VIEW 3: Matrix Calculator Suite -->
+    <div id="toolMatrixContainer" class="hidden grid-cols-1 lg:grid-cols-12 gap-4 w-full">
+      <!-- Matrix Inputs Section -->
+      <div class="lg:col-span-8 flex flex-col gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          
+          <!-- Matrix A Container -->
+          <div class="glass-panel p-4 rounded-2xl border border-slate-800 flex flex-col gap-3">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <h3 class="font-bold text-sm text-cyan-400 flex items-center gap-2">
+                <i class="fa-solid fa-table-cells"></i> Matrix A
+              </h3>
+              <div class="flex items-center gap-1 text-xs">
+                <select id="rowsA" class="bg-slate-900 text-slate-200 border border-slate-700 rounded px-1.5 py-0.5 text-xs">
+                  <option value="1">1</option>
+                  <option value="2" selected>2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                </select>
+                <span>×</span>
+                <select id="colsA" class="bg-slate-900 text-slate-200 border border-slate-700 rounded px-1.5 py-0.5 text-xs">
+                  <option value="1">1</option>
+                  <option value="2" selected>2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Input Grid for Matrix A -->
+            <div id="matrixGridA" class="grid gap-2 p-2 bg-slate-900/60 rounded-xl border border-slate-800/80 min-h-[140px] items-center justify-center"></div>
+          </div>
+
+          <!-- Matrix B Container -->
+          <div class="glass-panel p-4 rounded-2xl border border-slate-800 flex flex-col gap-3">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <h3 class="font-bold text-sm text-indigo-400 flex items-center gap-2">
+                <i class="fa-solid fa-table-cells"></i> Matrix B
+              </h3>
+              <div class="flex items-center gap-1 text-xs">
+                <select id="rowsB" class="bg-slate-900 text-slate-200 border border-slate-700 rounded px-1.5 py-0.5 text-xs">
+                  <option value="1">1</option>
+                  <option value="2" selected>2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                </select>
+                <span>×</span>
+                <select id="colsB" class="bg-slate-900 text-slate-200 border border-slate-700 rounded px-1.5 py-0.5 text-xs">
+                  <option value="1">1</option>
+                  <option value="2" selected>2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Input Grid for Matrix B -->
+            <div id="matrixGridB" class="grid gap-2 p-2 bg-slate-900/60 rounded-xl border border-slate-800/80 min-h-[140px] items-center justify-center"></div>
+          </div>
+
+        </div>
+
+        <!-- Operations Toolbar -->
+        <div class="glass-panel p-3.5 rounded-2xl border border-slate-800 flex flex-wrap gap-2 items-center justify-center">
+          <button data-op="add" class="matrix-op-btn px-3 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/30 rounded-xl text-xs font-bold transition-all cursor-pointer">A + B</button>
+          <button data-op="sub" class="matrix-op-btn px-3 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/30 rounded-xl text-xs font-bold transition-all cursor-pointer">A - B</button>
+          <button data-op="mul" class="matrix-op-btn px-3 py-2 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/30 rounded-xl text-xs font-bold transition-all cursor-pointer">A × B</button>
+          <button data-op="detA" class="matrix-op-btn px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer">det(A)</button>
+          <button data-op="detB" class="matrix-op-btn px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer">det(B)</button>
+          <button data-op="invA" class="matrix-op-btn px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer">A⁻¹</button>
+          <button data-op="invB" class="matrix-op-btn px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer">B⁻¹</button>
+          <button data-op="transA" class="matrix-op-btn px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer">Aᵀ</button>
+          <button data-op="transB" class="matrix-op-btn px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer">Bᵀ</button>
+        </div>
+      </div>
+
+      <!-- Matrix Output Result Side Panel -->
+      <div class="lg:col-span-4 glass-panel rounded-2xl p-4 flex flex-col justify-between border border-slate-800 shadow-2xl min-h-[300px]">
+        <div>
+          <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
+            <h3 class="font-bold text-sm text-slate-200 tracking-wide flex items-center gap-2">
+              <i class="fa-solid fa-square-poll-vertical text-emerald-400"></i> Operation Result
+            </h3>
+            <span id="matrixOpBadge" class="bg-emerald-500/20 text-emerald-400 text-[10px] font-mono px-2 py-0.5 rounded font-bold">A × B</span>
+          </div>
+
+          <!-- Result Grid Container -->
+          <div id="matrixResultContainer" class="flex flex-col items-center justify-center p-6 bg-slate-900/80 rounded-2xl border border-slate-800 min-h-[180px]">
+            <div id="matrixResultGrid" class="grid gap-2 items-center justify-center font-mono font-bold text-cyan-400 text-lg"></div>
+            <div id="matrixScalarResult" class="hidden font-mono text-3xl font-bold text-emerald-400"></div>
+            <div id="matrixErrorNotice" class="hidden text-xs text-rose-400 font-mono text-center"></div>
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-800 text-[11px] text-slate-500 font-mono text-center">
+          Scientific Calculator Pro &bull; Up to 4×4 Matrices
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="w-full text-center py-3 text-xs text-slate-500 font-mono flex items-center justify-between border-t border-slate-800/60 mt-2">
+      <span>Scientific Calculator Pro &copy; 2026</span>
+      <span>Scientific &bull; Graphing &bull; Matrix</span>
+    </footer>
+
+  </div>
+
+  <!-- Load Engine and Controllers -->
+  <script src="parser.js"></script>
+  <script src="graph.js"></script>
+  <script src="matrix.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

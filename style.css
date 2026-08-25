@@ -142,3 +142,82 @@ body.light-theme .border-slate-700,
 body.light-theme .border-slate-800 {
   border-color: #cbd5e1 !important;
 }
+
+/* ============================================================
+   Mobile-Responsive Button Sizing
+   ============================================================ */
+
+/* Scientific function keys: compact on mobile, grow on desktop */
+.sci-key {
+  padding-top: 0.45rem;
+  padding-bottom: 0.45rem;
+  font-size: 0.7rem;
+  line-height: 1;
+}
+
+@media (min-width: 480px) {
+  .sci-key {
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+    font-size: 0.75rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .sci-key {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Number/operator keys: compact on mobile */
+.num-key {
+  padding-top: 0.55rem;
+  padding-bottom: 0.55rem;
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+@media (min-width: 480px) {
+  .num-key {
+    padding-top: 0.7rem;
+    padding-bottom: 0.7rem;
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .num-key {
+    padding-top: 0.875rem;
+    padding-bottom: 0.875rem;
+    font-size: 1.25rem;
+  }
+}
+
+/* Equals button on mobile */
+#equalsBtn {
+  min-height: 2.8rem;
+}
+
+@media (min-width: 768px) {
+  #equalsBtn {
+    min-height: 0;
+  }
+}
+
+/* History panel: toggled via JS on mobile – show as slide-down panel */
+@media (max-width: 1023px) {
+  #historyPanel.mobile-visible {
+    display: flex !important;
+    flex-direction: column;
+    margin-top: 0;
+  }
+}
+
+/* Ensure the tool tab bar doesn't wrap on very small phones */
+.quick-tool-tab {
+  white-space: nowrap;
+  min-width: 0;
+}
+

@@ -394,7 +394,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  toggleHistoryBtn.addEventListener('click', () => historyPanel.classList.toggle('hidden'));
+  toggleHistoryBtn.addEventListener('click', () => {
+    const isLg = window.innerWidth >= 1024;
+    if (isLg) {
+      historyPanel.classList.toggle('hidden');
+      historyPanel.classList.toggle('flex');
+    } else {
+      historyPanel.classList.toggle('mobile-visible');
+    }
+  });
 
   // ----------------------------------------------------
   // GRAPHING CALCULATOR UI LOGIC
